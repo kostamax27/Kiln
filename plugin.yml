@@ -1,0 +1,6 @@
+name: Kiln
+author: kostamax27
+main: kostamax27\kiln\Loader
+version: 1.0.0
+api: 5.49.0
+load: STARTUP
