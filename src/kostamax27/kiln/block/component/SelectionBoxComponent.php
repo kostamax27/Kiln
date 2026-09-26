@@ -23,6 +23,6 @@ final class SelectionBoxComponent implements BlockComponent{
 	}
 
 	public function write(CompoundTag $components, int $protocol_id) : void{
-		$components->setTag(self::NAME, ($this->box?->writeOriginAndSize(CompoundTag::create()) ?? CompoundTag::create())->setByte("enabled", $this->box !== null ? 1 : 0));
+		$components->setTag(self::NAME, ($this->box?->writeOriginAndSize(CompoundTag::create()) ?? Box::writeEmptyOriginAndSize(CompoundTag::create()))->setByte("enabled", $this->box !== null ? 1 : 0));
 	}
 }

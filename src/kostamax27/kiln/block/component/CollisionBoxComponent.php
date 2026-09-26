@@ -50,7 +50,7 @@ final class CollisionBoxComponent implements BlockComponent{
 		if($protocol_id >= ProtocolVersions::V1_26_0){
 			$nbt = CompoundTag::create()->setTag("boxes", new ListTag(array_map(static fn(Box $box) : CompoundTag => $box->writeBounds(CompoundTag::create()), $this->boxes), NBT::TAG_Compound));
 		}else{
-			$nbt = $enabled ? Box::union($this->boxes)->writeOriginAndSize(CompoundTag::create()) : CompoundTag::create();
+			$nbt = $enabled ? Box::union($this->boxes)->writeOriginAndSize(CompoundTag::create()) : Box::writeEmptyOriginAndSize(CompoundTag::create());
 		}
 		$components->setTag(self::NAME, $nbt->setByte("enabled", $enabled ? 1 : 0));
 	}

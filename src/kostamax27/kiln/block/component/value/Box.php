@@ -76,6 +76,15 @@ final class Box{
 	}
 
 	/**
+	 * Writes an empty origin and size, which clients still expect when a box is disabled.
+	 */
+	public static function writeEmptyOriginAndSize(CompoundTag $nbt) : CompoundTag{
+		return $nbt
+			->setTag("origin", new ListTag([new FloatTag(0.0), new FloatTag(0.0), new FloatTag(0.0)], NBT::TAG_Float))
+			->setTag("size", new ListTag([new FloatTag(0.0), new FloatTag(0.0), new FloatTag(0.0)], NBT::TAG_Float));
+	}
+
+	/**
 	 * Writes the box as an origin relative to the bottom center of the block and a size, the format of
 	 * selection boxes and of legacy collision boxes.
 	 *
