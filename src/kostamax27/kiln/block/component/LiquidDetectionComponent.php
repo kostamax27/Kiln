@@ -31,7 +31,7 @@ final class LiquidDetectionComponent implements BlockComponent{
 
 	public function write(CompoundTag $components, int $protocol_id) : void{
 		if($protocol_id >= ProtocolVersions::V1_21_60){
-			$components->setTag(self::NAME, CompoundTag::create()->setTag("detectionRules", new ListTag(array_map(static fn(LiquidDetectionRule $rule) : CompoundTag => $rule->toNbt(), $this->rules), NBT::TAG_Compound)));
+			$components->setTag(self::NAME, CompoundTag::create()->setTag("detectionRules", new ListTag(array_map(static fn(LiquidDetectionRule $rule) : CompoundTag => $rule->toNbt($protocol_id), $this->rules), NBT::TAG_Compound)));
 		}
 	}
 }

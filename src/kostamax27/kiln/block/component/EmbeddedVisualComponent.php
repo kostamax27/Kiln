@@ -27,7 +27,7 @@ final class EmbeddedVisualComponent implements BlockComponent{
 	public function write(CompoundTag $components, int $protocol_id) : void{
 		if($protocol_id >= ProtocolVersions::V1_21_120){
 			$components->setTag(self::NAME, CompoundTag::create()
-				->setTag("geometryDescription", $this->geometry->encode())
+				->setTag("geometryDescription", $this->geometry->encode($protocol_id))
 				->setTag("materialInstancesDescription", $this->material_instances->encode($protocol_id)));
 		}
 	}

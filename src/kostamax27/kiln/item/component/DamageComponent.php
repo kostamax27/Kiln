@@ -7,6 +7,7 @@ namespace kostamax27\kiln\item\component;
 use kostamax27\kiln\network\ProtocolVersions;
 use kostamax27\kiln\util\TypeValidator;
 use pocketmine\nbt\tag\CompoundTag;
+use function min;
 
 final class DamageComponent implements ItemComponent{
 
@@ -27,8 +28,10 @@ final class DamageComponent implements ItemComponent{
 
 	public function write(CompoundTag $components, CompoundTag $properties, int $protocol_id) : void{
 		$properties->setInt("damage", $this->value);
-		if($protocol_id >= ProtocolVersions::V1_21_130){
+		if($protocol_id >= ProtocolVersions::V1_26_0){
 			$components->setTag(self::NAME, CompoundTag::create()->setShort("value", $this->value));
+		}elseif($protocol_id >= ProtocolVersions::V1_21_130){
+			$components->setTag(self::NAME, CompoundTag::create()->setByte("value", min($this->value, 127)));
 		}
 	}
 }

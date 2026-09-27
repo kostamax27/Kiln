@@ -32,7 +32,7 @@ final class PrecipitationInteractionsComponent implements BlockComponent{
 	}
 
 	public function write(CompoundTag $components, int $protocol_id) : void{
-		if($protocol_id >= ProtocolVersions::V1_21_120){
+		if($protocol_id >= ProtocolVersions::V1_21_130){
 			$components->setTag(self::NAME, CompoundTag::create()->setString("precipitation_behavior", $this->precipitation_behavior));
 		}
 	}

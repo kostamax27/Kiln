@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kostamax27\kiln\block\component;
 
+use kostamax27\kiln\util\Molang;
 use kostamax27\kiln\util\TypeValidator;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -43,16 +44,16 @@ final class GeometryComponent implements BlockComponent{
 	}
 
 	public function write(CompoundTag $components, int $protocol_id) : void{
-		$components->setTag(self::NAME, $this->encode());
+		$components->setTag(self::NAME, $this->encode($protocol_id));
 	}
 
 	/**
 	 * Encodes the geometry description, which other components such as {@see ItemVisualComponent} embed.
 	 */
-	public function encode() : CompoundTag{
+	public function encode(int $protocol_id) : CompoundTag{
 		$bone_visibility = CompoundTag::create();
 		foreach($this->bone_visibility as $bone => $visibility){
-			$bone_visibility->setString($bone, $visibility);
+			$bone_visibility->setString($bone, Molang::forProtocol($visibility, $protocol_id));
 		}
 		$nbt = CompoundTag::create()
 			->setTag("bone_visibility", $bone_visibility)

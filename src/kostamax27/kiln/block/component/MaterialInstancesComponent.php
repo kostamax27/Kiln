@@ -86,7 +86,7 @@ final class MaterialInstancesComponent implements BlockComponent{
 				$nbt->setByte("ambient_occlusion", $material->ambient_occlusion > 0.0 ? 1 : 0);
 			}
 			if($protocol_id >= ProtocolVersions::V1_21_60){
-				$nbt->setByte("packed_bools", $material->face_dimming ? 1 : 0);
+				$nbt->setByte("packed_bools", ($material->face_dimming ? 0x1 : 0) | ($material->isotropic ? 0x2 : 0));
 			}else{
 				$nbt->setByte("face_dimming", $material->face_dimming ? 1 : 0);
 			}
