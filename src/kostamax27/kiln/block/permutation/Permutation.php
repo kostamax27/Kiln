@@ -7,6 +7,7 @@ namespace kostamax27\kiln\block\permutation;
 use InvalidArgumentException;
 use kostamax27\kiln\block\component\BlockComponent;
 use kostamax27\kiln\block\state\StateCondition;
+use kostamax27\kiln\util\Molang;
 use kostamax27\kiln\util\TypeValidator;
 use pocketmine\nbt\tag\CompoundTag;
 use function array_map;
@@ -62,6 +63,6 @@ final class Permutation{
 		}
 		return CompoundTag::create()
 			->setTag("components", $components)
-			->setString("condition", $this->condition);
+			->setString("condition", Molang::forProtocol($this->condition, $protocol_id));
 	}
 }

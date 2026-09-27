@@ -61,6 +61,13 @@ final class Box{
 	}
 
 	/**
+	 * Returns the box cut off at the given height in pixels.
+	 */
+	public function clampHeight(float $max_y) : self{
+		return $this->max_y <= $max_y ? $this : new self($this->min_x, min($this->min_y, $max_y), $this->min_z, $this->max_x, $max_y, $this->max_z);
+	}
+
+	/**
 	 * Writes the box as pixel bounds, the format of collision boxes since 1.21.130.
 	 *
 	 * @return CompoundTag the given compound.

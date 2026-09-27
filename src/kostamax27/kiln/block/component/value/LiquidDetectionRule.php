@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kostamax27\kiln\block\component\value;
 
 use InvalidArgumentException;
+use kostamax27\kiln\network\ProtocolVersions;
 use kostamax27\kiln\util\TypeValidator;
 use pocketmine\math\Facing;
 use pocketmine\nbt\tag\CompoundTag;
@@ -39,16 +40,19 @@ final class LiquidDetectionRule{
 		}
 	}
 
-	public function toNbt() : CompoundTag{
+	public function toNbt(int $protocol_id) : CompoundTag{
 		$stops = 0;
 		foreach($this->stops_liquid_flowing_from as $face){
 			$stops |= 1 << $face;
 		}
-		return CompoundTag::create()
+		$nbt = CompoundTag::create()
 			->setByte("canContainLiquid", $this->can_contain_liquid ? 1 : 0)
 			->setString("liquidType", self::LIQUID_TYPE_WATER)
 			->setString("onLiquidTouches", $this->on_liquid_touches)
-			->setByte("stopsLiquidFromDirection", $stops)
-			->setByte("use_liquid_clipping", $this->use_liquid_clipping ? 1 : 0);
+			->setByte("stopsLiquidFromDirection", $stops);
+		if($protocol_id >= ProtocolVersions::V1_26_0){
+			$nbt->setByte("use_liquid_clipping", $this->use_liquid_clipping ? 1 : 0);
+		}
+		return $nbt;
 	}
 }

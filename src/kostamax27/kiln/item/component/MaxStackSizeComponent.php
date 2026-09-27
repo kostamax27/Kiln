@@ -28,7 +28,7 @@ final class MaxStackSizeComponent implements ItemComponent{
 	public function write(CompoundTag $components, CompoundTag $properties, int $protocol_id) : void{
 		$properties->setInt("max_stack_size", $this->value);
 		if($protocol_id >= ProtocolVersions::V1_21_60){
-			$components->setInt(self::NAME, $this->value);
+			$components->setTag(self::NAME, CompoundTag::create()->setByte("value", $this->value));
 		}
 	}
 }
