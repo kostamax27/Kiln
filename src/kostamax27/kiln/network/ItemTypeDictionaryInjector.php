@@ -52,7 +52,12 @@ final class ItemTypeDictionaryInjector{
 
 		$string_id = $entry->getStringId();
 		$numeric_id = $entry->getNumericId();
-		!isset($string_to_int[$string_id]) || throw new InvalidArgumentException("Item type dictionary already contains string ID \"{$string_id}\"");
+		if(isset($string_to_int[$string_id])){
+			$string_to_int[$string_id] === $numeric_id || throw new InvalidArgumentException("Item type dictionary must map \"{$string_id}\" to numeric ID {$numeric_id}, got {$string_to_int[$string_id]}");
+			$existing = self::find($item_types, $string_id) ?? throw new RuntimeException("Item type dictionary maps \"{$string_id}\" but has no entry for it");
+			self::equals($existing, $entry) || throw new InvalidArgumentException("Item type dictionary already contains a different definition of \"{$string_id}\", protocols sharing it need identical component data");
+			return;
+		}
 		!isset($int_to_string[$numeric_id]) || throw new InvalidArgumentException("Item type dictionary already contains numeric ID {$numeric_id}");
 
 		$item_types[] = $entry;
@@ -61,5 +66,24 @@ final class ItemTypeDictionaryInjector{
 		self::$item_types->setValue($dictionary, $item_types);
 		self::$string_to_int->setValue($dictionary, $string_to_int);
 		self::$int_to_string->setValue($dictionary, $int_to_string);
+	}
+
+	/**
+	 * @param array<mixed> $item_types
+	 */
+	private static function find(array $item_types, string $string_id) : ?ItemTypeEntry{
+		foreach($item_types as $existing){
+			if($existing instanceof ItemTypeEntry && $existing->getStringId() === $string_id){
+				return $existing;
+			}
+		}
+		return null;
+	}
+
+	private static function equals(ItemTypeEntry $a, ItemTypeEntry $b) : bool{
+		return $a->getNumericId() === $b->getNumericId() &&
+			$a->isComponentBased() === $b->isComponentBased() &&
+			$a->getVersion() === $b->getVersion() &&
+			$a->getComponentNbt()->getRoot()->equals($b->getComponentNbt()->getRoot());
 	}
 }

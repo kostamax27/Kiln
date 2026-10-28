@@ -16,6 +16,7 @@ use function array_keys;
 use function array_shift;
 use function count;
 use function hash;
+use function ksort;
 use function strcmp;
 use function uksort;
 
@@ -34,6 +35,21 @@ final class BlockStateDictionaryInjector{
 		foreach($entries as $entry){
 			$custom[$entry->getStateName()][] = $entry;
 		}
+
+		$existing = [];
+		foreach($dictionary->getStates() as $entry){
+			if(isset($custom[$name = $entry->getStateName()])){
+				$existing[$name][] = $entry;
+			}
+		}
+		foreach($existing as $name => $existing_entries){
+			self::encodeStates($existing_entries) === self::encodeStates($custom[$name]) || throw new InvalidArgumentException("Block state dictionary already contains a different definition of block \"{$name}\", protocols sharing it need identical states");
+			unset($custom[$name]);
+		}
+		if(count($custom) === 0){
+			return;
+		}
+
 		uksort($custom, static fn(string $a, string $b) : int => strcmp(hash("fnv164", $a), hash("fnv164", $b)));
 		$pending = array_keys($custom);
 
@@ -70,5 +86,18 @@ final class BlockStateDictionaryInjector{
 		$translator_reflection = new ReflectionClass(BlockTranslator::class);
 		$translator_reflection->getProperty("networkIdCache")->setValue($translator, []);
 		$translator_reflection->getProperty("fallbackStateId")->setValue($translator, $fallback);
+	}
+
+	/**
+	 * @param list<BlockStateDictionaryEntry> $entries
+	 * @return array<int, string>
+	 */
+	private static function encodeStates(array $entries) : array{
+		$states = [];
+		foreach($entries as $entry){
+			$states[$entry->getMeta()] = $entry->getRawStateProperties();
+		}
+		ksort($states);
+		return $states;
 	}
 }
