@@ -16,6 +16,7 @@ use function array_keys;
 use function array_shift;
 use function count;
 use function hash;
+use function in_array;
 use function ksort;
 use function strcmp;
 use function uksort;
@@ -74,10 +75,13 @@ final class BlockStateDictionaryInjector{
 			}
 		}
 
-		$fresh = new BlockStateDictionary($sorted);
 		$reflection = new ReflectionClass(BlockStateDictionary::class);
+		$preserved = ["addedPropertyDefaults"];
+		$fresh = $reflection->hasProperty("addedPropertyDefaults") ?
+			new BlockStateDictionary($sorted, $reflection->getProperty("addedPropertyDefaults")->getValue($dictionary)) :
+			new BlockStateDictionary($sorted);
 		foreach($reflection->getProperties() as $property){
-			if(!$property->isStatic()){
+			if(!$property->isStatic() && !in_array($property->getName(), $preserved, true)){
 				$property->setValue($dictionary, $property->getValue($fresh));
 			}
 		}
